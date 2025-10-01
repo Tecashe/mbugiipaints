@@ -1,0 +1,271 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  password  String
+  role      Role     @default(USER)
+  avatar    String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  orders      Order[]
+  enrollments Enrollment[]
+  inquiries   Inquiry[]
+  testimonials Testimonial[]
+
+  @@map("users")
+}
+
+model Artwork {
+  id          String      @id @default(cuid())
+  title       String
+  description String?
+  price       Float
+  category    String
+  medium      String
+  dimensions  String
+  year        Int
+  images      String[]
+  status      ArtworkStatus @default(AVAILABLE)
+  featured    Boolean     @default(false)
+  tags        String[]
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Relations
+  orderItems OrderItem[]
+
+  @@map("artworks")
+}
+
+model Class {
+  id          String   @id @default(cuid())
+  title       String
+  description String
+  price       Float
+  duration    Int      // in hours
+  maxStudents Int
+  level       String   // Beginner, Intermediate, Advanced
+  category    String
+  image       String?
+  materials   String[] // List of required materials
+  schedule    Json     // Flexible schedule data
+  isActive    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  enrollments Enrollment[]
+
+  @@map("classes")
+}
+
+model Enrollment {
+  id        String   @id @default(cuid())
+  userId    String
+  classId   String
+  status    EnrollmentStatus @default(PENDING)
+  enrolledAt DateTime @default(now())
+  notes     String?
+
+  // Relations
+  user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  class Class @relation(fields: [classId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, classId])
+  @@map("enrollments")
+}
+
+model Order {
+  id          String      @id @default(cuid())
+  userId      String
+  status      OrderStatus @default(PENDING)
+  total       Float
+  subtotal    Float
+  tax         Float       @default(0)
+  shipping    Float       @default(0)
+  discount    Float       @default(0)
+  promoCode   String?
+  
+  // Shipping information
+  shippingAddress Json
+  billingAddress  Json?
+  
+  // Payment information
+  paymentMethod   String?
+  paymentStatus   PaymentStatus @default(PENDING)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  orderItems OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String @id @default(cuid())
+  orderId   String
+  artworkId String
+  quantity  Int    @default(1)
+  price     Float  // Price at time of order
+
+  // Relations
+  order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
+  artwork Artwork @relation(fields: [artworkId], references: [id], onDelete: Cascade)
+
+  @@map("order_items")
+}
+
+model Inquiry {
+  id        String        @id @default(cuid())
+  userId    String?
+  name      String
+  email     String
+  subject   String
+  message   String
+  type      InquiryType   @default(GENERAL)
+  status    InquiryStatus @default(UNREAD)
+  priority  Priority      @default(MEDIUM)
+  response  String?
+  createdAt DateTime      @default(now())
+  updatedAt DateTime      @updatedAt
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("inquiries")
+}
+
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  excerpt     String?
+  content     String
+  image       String?
+  tags        String[]
+  published   Boolean  @default(false)
+  featured    Boolean  @default(false)
+  views       Int      @default(0)
+  readTime    Int?     // in minutes
+  publishedAt DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("blog_posts")
+}
+
+model Testimonial {
+  id        String   @id @default(cuid())
+  userId    String?
+  name      String
+  email     String?
+  avatar    String?
+  content   String
+  rating    Int      @default(5)
+  featured  Boolean  @default(false)
+  approved  Boolean  @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user User? @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("testimonials")
+}
+
+model Newsletter {
+  id          String   @id @default(cuid())
+  email       String   @unique
+  name        String?
+  status      SubscriptionStatus @default(ACTIVE)
+  source      String?  // Where they signed up from
+  tags        String[] // Segmentation tags
+  subscribedAt DateTime @default(now())
+  unsubscribedAt DateTime?
+
+  @@map("newsletter")
+}
+
+// Enums
+enum Role {
+  USER
+  ADMIN
+}
+
+enum ArtworkStatus {
+  AVAILABLE
+  SOLD
+  RESERVED
+  NOT_FOR_SALE
+}
+
+enum EnrollmentStatus {
+  PENDING
+  CONFIRMED
+  COMPLETED
+  CANCELLED
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  PROCESSING
+  SHIPPED
+  DELIVERED
+  CANCELLED
+  REFUNDED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+  REFUNDED
+}
+
+enum InquiryType {
+  GENERAL
+  COMMISSION
+  CLASS_INQUIRY
+  PURCHASE
+  COLLABORATION
+  PRESS
+}
+
+enum InquiryStatus {
+  UNREAD
+  READ
+  REPLIED
+  RESOLVED
+  ARCHIVED
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum SubscriptionStatus {
+  ACTIVE
+  UNSUBSCRIBED
+  BOUNCED
+}
