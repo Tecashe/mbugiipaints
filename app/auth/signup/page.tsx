@@ -1,5 +1,5 @@
 "use client"
-export const dynamic = 'force-dynamic'
+
 import type React from "react"
 
 import { useState } from "react"
@@ -11,6 +11,8 @@ import { Badge } from "@/components/ui/badge"
 import { useAuth } from "@/hooks/use-auth"
 import Link from "next/link"
 import { Eye, EyeOff, Palette, ArrowLeft, Check } from "lucide-react"
+
+export const dynamic = 'force-dynamic'
 
 export default function SignupPage() {
   const [showPassword, setShowPassword] = useState(false)

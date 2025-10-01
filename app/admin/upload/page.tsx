@@ -1,5 +1,4 @@
 "use client"
-export const dynamic = 'force-dynamic'
 
 import type React from "react"
 
@@ -14,6 +13,9 @@ import { Badge } from "@/components/ui/badge"
 import Link from "next/link"
 import Image from "next/image"
 import { Upload, X, ArrowLeft, Save, Eye, AlertCircle, CheckCircle, Palette } from "lucide-react"
+
+
+export const dynamic = 'force-dynamic'
 
 export default function UploadArtworkPage() {
   const [dragActive, setDragActive] = useState(false)

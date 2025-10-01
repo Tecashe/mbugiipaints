@@ -1,5 +1,5 @@
 "use client"
-export const dynamic = 'force-dynamic'
+
 import { useState } from "react"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
@@ -11,6 +11,8 @@ import { useCart } from "@/hooks/use-cart"
 import Image from "next/image"
 import Link from "next/link"
 import { ShoppingCart, Heart, Filter, Search, Star, Eye } from "lucide-react"
+
+export const dynamic = 'force-dynamic'
 
 export default function ShopPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")

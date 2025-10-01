@@ -2,7 +2,6 @@
 
 "use client"
 
-export const dynamic = 'force-dynamic'
 
 import { useState } from "react"
 import { AuthGuard } from "@/components/auth-guard"
@@ -34,6 +33,8 @@ import {
   Calendar,
   LogOut,
 } from "lucide-react"
+
+export const dynamic = 'force-dynamic'
 
 // Mock data for the admin dashboard
 const mockArtworks = [

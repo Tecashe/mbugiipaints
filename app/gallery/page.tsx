@@ -1,5 +1,5 @@
 "use client"
-export const dynamic = 'force-dynamic'
+
 import { useState } from "react"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
@@ -12,7 +12,11 @@ import Link from "next/link"
 import Image from "next/image"
 import { Search, Grid, List, ShoppingCart, Heart } from "lucide-react"
 
+export const dynamic = 'force-dynamic'
+
 const categories = ["all", "landscapes", "urban", "nature", "abstract", "portraits"]
+
+
 
 export default function GalleryPage() {
   const [selectedCategory, setSelectedCategory] = useState("all")
