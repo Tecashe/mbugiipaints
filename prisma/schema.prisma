@@ -21,16 +21,16 @@ model User {
   updatedAt DateTime @updatedAt
 
   // Relations
-  orders      Order[]
-  enrollments Enrollment[]
-  inquiries   Inquiry[]
+  orders       Order[]
+  enrollments  Enrollment[]
+  inquiries    Inquiry[]
   testimonials Testimonial[]
 
   @@map("users")
 }
 
 model Artwork {
-  id          String      @id @default(cuid())
+  id          String        @id @default(cuid())
   title       String
   description String?
   price       Float
@@ -40,10 +40,10 @@ model Artwork {
   year        Int
   images      String[]
   status      ArtworkStatus @default(AVAILABLE)
-  featured    Boolean     @default(false)
+  featured    Boolean       @default(false)
   tags        String[]
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 
   // Relations
   orderItems OrderItem[]
@@ -56,16 +56,36 @@ model Class {
   title       String
   description String
   price       Float
-  duration    Int      // in hours
+  duration    Int // in hours
+  sessions    Int      @default(1) // Number of sessions
   maxStudents Int
-  level       String   // Beginner, Intermediate, Advanced
+  level       String // Beginner, Intermediate, Advanced
   category    String
   image       String?
+  images      String[] @default([]) // Multiple images
   materials   String[] // List of required materials
-  schedule    Json     // Flexible schedule data
-  isActive    Boolean  @default(true)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  schedule    Json // Flexible schedule data
+
+  // Date fields
+  startDate DateTime
+  endDate   DateTime
+
+  // Location
+  location String?
+  address  String?
+
+  // Additional details
+  highlights   String[] @default([])
+  curriculum   String[] @default([])
+  requirements String[] @default([])
+  included     String[] @default([])
+
+  // Status
+  status   ClassStatus @default(ACTIVE)
+  isActive Boolean     @default(true)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   enrollments Enrollment[]
@@ -74,12 +94,12 @@ model Class {
 }
 
 model Enrollment {
-  id        String   @id @default(cuid())
-  userId    String
-  classId   String
-  status    EnrollmentStatus @default(PENDING)
-  enrolledAt DateTime @default(now())
-  notes     String?
+  id         String           @id @default(cuid())
+  userId     String
+  classId    String
+  status     EnrollmentStatus @default(PENDING)
+  enrolledAt DateTime         @default(now())
+  notes      String?
 
   // Relations
   user  User  @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -90,26 +110,26 @@ model Enrollment {
 }
 
 model Order {
-  id          String      @id @default(cuid())
-  userId      String
-  status      OrderStatus @default(PENDING)
-  total       Float
-  subtotal    Float
-  tax         Float       @default(0)
-  shipping    Float       @default(0)
-  discount    Float       @default(0)
-  promoCode   String?
-  
+  id        String      @id @default(cuid())
+  userId    String
+  status    OrderStatus @default(PENDING)
+  total     Float
+  subtotal  Float
+  tax       Float       @default(0)
+  shipping  Float       @default(0)
+  discount  Float       @default(0)
+  promoCode String?
+
   // Shipping information
   shippingAddress Json
   billingAddress  Json?
-  
+
   // Payment information
-  paymentMethod   String?
-  paymentStatus   PaymentStatus @default(PENDING)
-  
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  paymentMethod String?
+  paymentStatus PaymentStatus @default(PENDING)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   // Relations
   user       User        @relation(fields: [userId], references: [id], onDelete: Cascade)
@@ -123,7 +143,7 @@ model OrderItem {
   orderId   String
   artworkId String
   quantity  Int    @default(1)
-  price     Float  // Price at time of order
+  price     Float // Price at time of order
 
   // Relations
   order   Order   @relation(fields: [orderId], references: [id], onDelete: Cascade)
@@ -153,20 +173,20 @@ model Inquiry {
 }
 
 model BlogPost {
-  id          String   @id @default(cuid())
+  id          String    @id @default(cuid())
   title       String
-  slug        String   @unique
+  slug        String    @unique
   excerpt     String?
   content     String
   image       String?
   tags        String[]
-  published   Boolean  @default(false)
-  featured    Boolean  @default(false)
-  views       Int      @default(0)
-  readTime    Int?     // in minutes
+  published   Boolean   @default(false)
+  featured    Boolean   @default(false)
+  views       Int       @default(0)
+  readTime    Int? // in minutes
   publishedAt DateTime?
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
 
   @@map("blog_posts")
 }
@@ -191,13 +211,13 @@ model Testimonial {
 }
 
 model Newsletter {
-  id          String   @id @default(cuid())
-  email       String   @unique
-  name        String?
-  status      SubscriptionStatus @default(ACTIVE)
-  source      String?  // Where they signed up from
-  tags        String[] // Segmentation tags
-  subscribedAt DateTime @default(now())
+  id             String             @id @default(cuid())
+  email          String             @unique
+  name           String?
+  status         SubscriptionStatus @default(ACTIVE)
+  source         String? // Where they signed up from
+  tags           String[] // Segmentation tags
+  subscribedAt   DateTime           @default(now())
   unsubscribedAt DateTime?
 
   @@map("newsletter")
@@ -268,4 +288,12 @@ enum SubscriptionStatus {
   ACTIVE
   UNSUBSCRIBED
   BOUNCED
+}
+
+enum ClassStatus {
+  DRAFT
+  ACTIVE
+  FULL
+  COMPLETED
+  CANCELLED
 }
