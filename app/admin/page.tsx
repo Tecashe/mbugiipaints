@@ -3,7 +3,7 @@
 "use client"
 
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { AuthGuard } from "@/components/auth-guard"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
@@ -181,6 +181,8 @@ const mockInquiries = [
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState("overview")
   const [searchTerm, setSearchTerm] = useState("")
+  const [mounted, setMounted] = useState(false)
+
 
   const handleLogout = () => {
     localStorage.removeItem("isAuthenticated")

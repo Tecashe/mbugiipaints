@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Navigation } from "@/components/navigation"
 import { Button } from "@/components/ui/button"
@@ -22,6 +22,16 @@ export default function LoginPage() {
     email: "",
     password: "",
   })
+
+  const [mounted, setMounted] = useState(false)
+    
+    useEffect(() => {
+      setMounted(true)
+    }, [])
+  
+    if (!mounted) {
+      return null
+    }
 
   const { login } = useAuth()
   const router = useRouter()
