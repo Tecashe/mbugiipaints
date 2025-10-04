@@ -534,7 +534,7 @@ export default function UploadArtworkPage() {
   useEffect(() => {
     setMounted(true)
   }, [])
-
+//gbbu
   // NOW we can do the conditional return after all hooks are called
   if (!mounted) {
     return null
@@ -785,9 +785,9 @@ export default function UploadArtworkPage() {
                   placeholder="Describe your artwork, inspiration, techniques used, or any other details..."
                   className="font-light"
                 />
-              </div>
+              </div> 
             </Card>
-
+ 
             <div className="flex justify-between items-center">
               <Button type="button" variant="outline" className="font-light bg-transparent">
                 Save as Draft
