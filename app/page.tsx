@@ -263,9 +263,9 @@ export default function HomePage() {
 
                 <div className="flex items-center gap-2">
                   <Image src="/painterlogo.png" alt="Mbugiipaints" width={64} height={64} className="h-12 w-12 sm:h-16 sm:w-16" />
-                  <span className="text-lg sm:text-xl font-bold">Yazzil</span>
+                  <span className="text-lg sm:text-xl font-bold">Mbugiipaints</span>
                 </div>
-                <span className="text-xl font-light tracking-wide">mbugiipaints</span>
+                {/* <span className="text-xl font-light tracking-wide">mbugiipaints</span> */}
               </div>
               <p className="font-light text-muted-foreground text-pretty">
                 Creating vibrant artworks and sharing the joy of painting through education and inspiration.

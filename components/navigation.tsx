@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react"
 import Link from "next/link"
+import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import {
   Menu,
@@ -73,10 +74,10 @@ export function Navigation() {
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
           <Link href="/" className="flex items-center space-x-2 group">
-            <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-              <Palette className="w-4 h-4 text-primary-foreground" />
+            <div className="flex items-center gap-2">
+              <Image src="/painterlogo.png" alt="Mbugiipaints" width={64} height={64} className="h-12 w-12 sm:h-16 sm:w-16" />
+              <span className="text-lg sm:text-xl font-bold">Mbugiipaints</span>
             </div>
-            <span className="font-light text-xl tracking-wide">mbugiipaints</span>
           </Link>
 
           {/* Desktop Navigation */}
