@@ -534,7 +534,7 @@ export default function UploadArtworkPage() {
   useEffect(() => {
     setMounted(true)
   }, [])
-//gbbu
+
   // NOW we can do the conditional return after all hooks are called
   if (!mounted) {
     return null

@@ -260,8 +260,10 @@ export default function HomePage() {
           <div className="grid md:grid-cols-4 gap-8">
             <div className="space-y-4">
               <div className="flex items-center space-x-2">
-                <div className="w-8 h-8 bg-primary rounded-full flex items-center justify-center">
-                  <Palette className="w-4 h-4 text-primary-foreground" />
+
+                <div className="flex items-center gap-2">
+                  <Image src="/painterlogo.png" alt="Mbugiipaints" width={64} height={64} className="h-12 w-12 sm:h-16 sm:w-16" />
+                  <span className="text-lg sm:text-xl font-bold">Yazzil</span>
                 </div>
                 <span className="text-xl font-light tracking-wide">mbugiipaints</span>
               </div>
