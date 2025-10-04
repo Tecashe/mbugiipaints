@@ -424,7 +424,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useCallback, useEffect } from "react"
 import { AuthGuard } from "@/components/auth-guard"
 import { Button } from "@/components/ui/button"
@@ -460,14 +459,7 @@ export default function UploadArtworkPage() {
   const categories = ["Landscapes", "Urban", "Nature", "Abstract", "Portraits", "Still Life"]
   const mediums = ["Oil on Canvas", "Acrylic on Canvas", "Watercolor", "Mixed Media", "Digital", "Charcoal", "Pastel"]
 
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
-  if (!mounted) {
-    return null
-  }
-
+  // Define all hooks BEFORE any conditional returns
   const handleDrag = useCallback((e: React.DragEvent) => {
     e.preventDefault()
     e.stopPropagation()
@@ -489,36 +481,34 @@ export default function UploadArtworkPage() {
     }
   }, [])
 
-  const handleFileInput = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileInput = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       const files = Array.from(e.target.files).filter((file) => file.type.startsWith("image/"))
       setUploadedFiles((prev) => [...prev, ...files])
     }
-  }
+  }, [])
 
-  const removeFile = (index: number) => {
+  const removeFile = useCallback((index: number) => {
     setUploadedFiles((prev) => prev.filter((_, i) => i !== index))
-  }
+  }, [])
 
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+  const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? (e.target as HTMLInputElement).checked : value,
     }))
-  }
+  }, [])
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault()
     setIsUploading(true)
     setUploadStatus("uploading")
 
-    // Simulate upload process
     try {
       await new Promise((resolve) => setTimeout(resolve, 2000))
       setUploadStatus("success")
 
-      // Reset form after successful upload
       setTimeout(() => {
         setFormData({
           title: "",
@@ -539,12 +529,20 @@ export default function UploadArtworkPage() {
     } finally {
       setIsUploading(false)
     }
+  }, [])
+
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
+  // NOW we can do the conditional return after all hooks are called
+  if (!mounted) {
+    return null
   }
 
   return (
     <AuthGuard>
       <div className="min-h-screen bg-background">
-        {/* Navigation */}
         <nav className="bg-card border-b border-border sticky top-0 z-50">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
@@ -577,7 +575,6 @@ export default function UploadArtworkPage() {
         </nav>
 
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {/* Upload Status */}
           {uploadStatus === "success" && (
             <Card className="p-4 mb-6 bg-green-50 border-green-200">
               <div className="flex items-center space-x-2 text-green-800">
@@ -597,11 +594,9 @@ export default function UploadArtworkPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-8">
-            {/* Image Upload Section */}
             <Card className="p-6">
               <h2 className="text-xl font-light text-foreground mb-4">Upload Images</h2>
 
-              {/* Drag and Drop Area */}
               <div
                 className={`relative border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
                   dragActive ? "border-primary bg-primary/5" : "border-border hover:border-primary hover:bg-primary/5"
@@ -630,7 +625,6 @@ export default function UploadArtworkPage() {
                 </div>
               </div>
 
-              {/* Uploaded Files Preview */}
               {uploadedFiles.length > 0 && (
                 <div className="mt-6">
                   <h3 className="text-lg font-light text-foreground mb-4">Uploaded Images ({uploadedFiles.length})</h3>
@@ -639,7 +633,7 @@ export default function UploadArtworkPage() {
                       <div key={index} className="relative group">
                         <div className="aspect-square bg-muted rounded-lg overflow-hidden">
                           <Image
-                            src={URL.createObjectURL(file) || "/placeholder.svg"}
+                            src={URL.createObjectURL(file)}
                             alt={`Upload ${index + 1}`}
                             width={200}
                             height={200}
@@ -661,15 +655,12 @@ export default function UploadArtworkPage() {
               )}
             </Card>
 
-            {/* Artwork Details */}
             <Card className="p-6">
               <h2 className="text-xl font-light text-foreground mb-4">Artwork Details</h2>
               <div className="grid md:grid-cols-2 gap-6">
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="title" className="font-light">
-                      Title *
-                    </Label>
+                    <Label htmlFor="title" className="font-light">Title *</Label>
                     <Input
                       id="title"
                       name="title"
@@ -682,9 +673,7 @@ export default function UploadArtworkPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="medium" className="font-light">
-                      Medium *
-                    </Label>
+                    <Label htmlFor="medium" className="font-light">Medium *</Label>
                     <select
                       id="medium"
                       name="medium"
@@ -695,17 +684,13 @@ export default function UploadArtworkPage() {
                     >
                       <option value="">Select medium</option>
                       {mediums.map((medium) => (
-                        <option key={medium} value={medium}>
-                          {medium}
-                        </option>
+                        <option key={medium} value={medium}>{medium}</option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <Label htmlFor="size" className="font-light">
-                      Size *
-                    </Label>
+                    <Label htmlFor="size" className="font-light">Size *</Label>
                     <Input
                       id="size"
                       name="size"
@@ -718,9 +703,7 @@ export default function UploadArtworkPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="year" className="font-light">
-                      Year *
-                    </Label>
+                    <Label htmlFor="year" className="font-light">Year *</Label>
                     <Input
                       id="year"
                       name="year"
@@ -737,9 +720,7 @@ export default function UploadArtworkPage() {
 
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="category" className="font-light">
-                      Category *
-                    </Label>
+                    <Label htmlFor="category" className="font-light">Category *</Label>
                     <select
                       id="category"
                       name="category"
@@ -750,17 +731,13 @@ export default function UploadArtworkPage() {
                     >
                       <option value="">Select category</option>
                       {categories.map((category) => (
-                        <option key={category} value={category}>
-                          {category}
-                        </option>
+                        <option key={category} value={category}>{category}</option>
                       ))}
                     </select>
                   </div>
 
                   <div>
-                    <Label htmlFor="price" className="font-light">
-                      Price
-                    </Label>
+                    <Label htmlFor="price" className="font-light">Price</Label>
                     <Input
                       id="price"
                       name="price"
@@ -772,9 +749,7 @@ export default function UploadArtworkPage() {
                   </div>
 
                   <div>
-                    <Label htmlFor="tags" className="font-light">
-                      Tags
-                    </Label>
+                    <Label htmlFor="tags" className="font-light">Tags</Label>
                     <Input
                       id="tags"
                       name="tags"
@@ -794,17 +769,13 @@ export default function UploadArtworkPage() {
                       onChange={handleInputChange}
                       className="rounded"
                     />
-                    <Label htmlFor="available" className="font-light">
-                      Available for purchase
-                    </Label>
+                    <Label htmlFor="available" className="font-light">Available for purchase</Label>
                   </div>
                 </div>
               </div>
 
               <div className="mt-6">
-                <Label htmlFor="description" className="font-light">
-                  Description
-                </Label>
+                <Label htmlFor="description" className="font-light">Description</Label>
                 <Textarea
                   id="description"
                   name="description"
@@ -817,7 +788,6 @@ export default function UploadArtworkPage() {
               </div>
             </Card>
 
-            {/* Action Buttons */}
             <div className="flex justify-between items-center">
               <Button type="button" variant="outline" className="font-light bg-transparent">
                 Save as Draft
